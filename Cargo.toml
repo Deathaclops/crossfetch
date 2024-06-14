@@ -1,6 +1,8 @@
 [package]
-name = "defetch"
-version = "0.1.0"
+name = "crossfetch"
+version = "0.2.0"
+authors = ["Deathaclops <deathaclops@gmail.com>"]
+description = "A library for fetching local files on both native platforms and WebAssembly"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,21 +10,8 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
-[dependencies]
+[target.wasm32-unknown-unknown.dependencies]
 wasm-bindgen = "0.2.88"
 js-sys = "0.3.65"
 wasm-bindgen-futures = "0.4.38"
-tokio = { version = "1.34.0", features = ["rt"] }
-
-[dependencies.web-sys]
-version = "0.3.66"
-features = [
-  'Headers',
-  'Request',
-  'RequestInit',
-  'RequestMode',
-  'Response',
-  'Window',
-  'TextDecoder',
-  'console'
-]
+web-sys = { version = "0.3.69", features = ["Headers", "Request", "RequestInit", "RequestMode", "Response", "Window", "TextDecoder", "console"] }
