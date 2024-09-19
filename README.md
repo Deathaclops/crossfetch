@@ -1,11 +1,12 @@
 
 # CrossFetch
-CrossFetch is a library for fetching local files on both native platforms and
-WebAssembly. Files are read into a struct with the array of bytes. Text
-can be read from the struct with the .text() method.
+CrossFetch is a library for fetching files on both native and WebAssembly platforms.
+Files can be relative local paths or http/https urls, both work on either platform.
+Files are loaded into an array of bytes. Use the .to_string() or .as_str() method on
+a Vec<u8> to convert it into a unicode string.
 
-## Roadmap
-- [x] Fetch local files as bytes
-- [x] Fetch local text files into strings  
-- [ ] Add remote URL fetch support
+## Roadmap:
+- [x] Fetch local files as bytes (inc. WASM)
+- [x] Fetch remote http and https files as bytes
+- [x] Easy conversion to strings
 
