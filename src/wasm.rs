@@ -7,17 +7,15 @@ pub mod crossfetch_wasm {
 	use web_sys::{Request, RequestInit, RequestMode, Response};
 	use crate::CrossFetchError;
 	
-	pub async fn fetch<S: AsRef<str>> ( url: S ) -> Result<Vec<u8>, CrossFetchError> {
-
-		let url_str = url.as_ref().to_string();
+	pub async fn fetch(url: impl Into<String>) -> Result<Vec<u8>, CrossFetchError> {
+		let url_str = url.into();
 		let local_fetch = fetch_web(url_str).await;
 		if local_fetch.is_err() {
 			return Err(CrossFetchError::JSError(local_fetch.err().unwrap()));
 		} else { return Ok(local_fetch.unwrap()); }
-
 	} // end fn fetch
 
-	async fn fetch_web ( path: String ) -> Result<Vec<u8>, JsValue> {
+	async fn fetch_web (path: String) -> Result<Vec<u8>, JsValue> {
 
 		let opts: RequestInit = RequestInit::new();
 		opts.set_method("GET");
@@ -36,9 +34,6 @@ pub mod crossfetch_wasm {
 		let out: Vec<u8> = array_buffer.to_vec();
 
 		return Ok(out);
-		
-	} // end fn fetch_local
 
-	
-
-}
+	} // end fn fetch_web
+} // end mod crossfetch_wasm
