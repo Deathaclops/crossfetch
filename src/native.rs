@@ -7,9 +7,15 @@ pub mod crossfetch_native {
 
 	pub async fn fetch(url: impl Into<String>) -> Result<Vec<u8>, CrossFetchError> {
 		let url_str = url.into();
-		if url_str.len() > 4 && &url_str[0..4] == "http" {
-			return cf_remote_adapter(url_str).await;
-		} else { return cf_local_adapter(url_str); }
+		if url_str.len() > 4 && &url_str[0..4] == "http" { return cf_remote_adapter(url_str).await; }
+		#[cfg(target_os = "windows")]
+		if url_str.len() > 8 && &url_str[0..8] == "file:///" {
+			let path = url_str[8..].to_string();
+			return cf_local_adapter(path);
+		} if url_str.len() > 7 && &url_str[0..7] == "file://" {
+			let path = url_str[7..].to_string();
+			return cf_local_adapter(path);
+		} return cf_local_adapter(url_str);
 	} // end fn fetch
 
 	fn cf_local_adapter(path: String) -> Result<Vec<u8>, CrossFetchError> {
