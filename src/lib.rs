@@ -14,12 +14,27 @@ pub enum CrossFetchError {
 } // end enum CrossFetchError
 
 pub trait UnicodeBytes {
-	fn to_string (&self) -> String;
-	fn as_str (&self) -> &str;
+	fn as_str(&self) -> Option<&str>;
+	fn to_string(&self) -> Option<String>;
+	fn to_string_cloneless(self) -> Option<String>;
+	fn to_string_from_utf16(&self) -> Option<String>;
 } // end trait Example
 
 impl UnicodeBytes for Vec<u8> {
-	fn to_string (&self) -> String { return String::from_utf8(self.clone()).unwrap(); }
-	fn as_str (&self) -> &str { return std::str::from_utf8(self).unwrap(); }
+	fn as_str(&self) -> Option<&str> { return std::str::from_utf8(self).ok(); }
+	fn to_string(&self) -> Option<String> { return String::from_utf8(self.clone()).ok(); }
+	fn to_string_cloneless(self) -> Option<String> { return String::from_utf8(self).ok(); }
+	fn to_string_from_utf16(&self) -> Option<String> {
+		if self.len() % 2 != 0 { return None; } // UTF-16 requires even number of bytes
+		let u16_vec: Vec<u16> = self
+			.chunks_exact(2) // Iterate over chunks of 2 bytes
+			.map(|chunk| {
+				// Convert each 2-byte chunk into a [u8; 2] array
+				let array: [u8; 2] = [chunk[0], chunk[1]];
+				// Interpret the 2 bytes as a u16 using native endianness
+				u16::from_ne_bytes(array)
+			}).collect();
+		return String::from_utf16(&u16_vec).ok();
+	} // end fn to_string_from_utf16
 } // end impl Example
 
